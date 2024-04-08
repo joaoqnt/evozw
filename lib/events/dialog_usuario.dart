@@ -21,18 +21,26 @@ class DialogUsuario{
       controller.tecTelefone.text = UtilBrasilFields.obterTelefone(usuario.telefone!);
       controller.tecDataRegistro.text = FormatingDate.getDate(usuario.dataCadastro, FormatingDate.formatDDMMYYYYHHMM);
       controller.tecSenha.text = usuario.senha!;//Criptography().decryptPassword(usuario.senha!);
-      controller.perfis.forEach((element) {
-        if(usuario.perfil == element.perfil){
-          controller.perfilSelected = element;
-        }
-      });
+      controller.permCadCliente = usuario.permCadCliente!;
+      controller.permAltProduto = usuario.permAltProduto!;
+      controller.permCadProduto = usuario.permCadProduto!;
+      controller.permAltCliente = usuario.permAltCliente!;
+      controller.permVisVendas = usuario.permVisVendas!;
+      controller.permVisRelator = usuario.permVisRelator!;
+      controller.permContCaixa = usuario.permContCaixa!;
     } else{
       controller.tecId.text = "Automático";
       controller.tecNome.text = "";
       controller.tecEmail.text = "";
       controller.tecTelefone.text = "";
       controller.tecDataRegistro.text = "";
-      controller.perfilSelected = null;
+      controller.permCadCliente = false;
+      controller.permAltProduto = false;
+      controller.permCadProduto = false;
+      controller.permAltCliente = false;
+      controller.permVisVendas = false;
+      controller.permVisRelator = false;
+      controller.permContCaixa = false;
     }
     showDialog(context: context, builder: (context) {
       return Observer(
@@ -182,27 +190,43 @@ class DialogUsuario{
         builder: (context) {
           return Column(
             children: [
-              CustomDropDown(
-                value: controller.perfilSelected,
-                isExpanded: true,
-                items:controller.perfis.map((e) {
-                  return DropdownMenuItem(
-                      value: e,
-                      child: Text("${e.perfil}")
-                  );
-                }).toList(),
-                onChange: (selectedValue) {
-                  controller.setPerfil(selectedValue as Config);
-                },
-              ),
+              // CustomDropDown(
+              //   value: controller.perfilSelected,
+              //   isExpanded: true,
+              //   items:controller.perfis.map((e) {
+              //     return DropdownMenuItem(
+              //         value: e,
+              //         child: Text("${e.perfil}")
+              //     );
+              //   }).toList(),
+              //   onChange: (selectedValue) {
+              //     controller.setPerfil(selectedValue as Config);
+              //   },
+              // ),
               Row(
                 children: [
                   Expanded(
                       child: Text("Cadastro de Clientes")
                   ),
                   CupertinoSwitch(
-                    value: controller.perfilSelected?.permCadCliente??false,
-                    onChanged: (value) {},
+                    value: controller.permCadCliente,
+                    onChanged: (value) {
+                      controller.setPermCadCliente();
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 8,),
+              Row(
+                children: [
+                  Expanded(
+                      child: Text("Alteração de Clientes")
+                  ),
+                  CupertinoSwitch(
+                    value: controller.permAltCliente,
+                    onChanged: (value) {
+                      controller.setPermAltCliente();
+                    },
                   ),
                 ],
               ),
@@ -213,8 +237,38 @@ class DialogUsuario{
                       child: Text("Cadastro de Produtos")
                   ),
                   CupertinoSwitch(
-                    value: controller.perfilSelected?.permCadProduto??false,
-                    onChanged: (value) {},
+                    value: controller.permCadProduto,
+                    onChanged: (value) {
+                      controller.setPermCadProduto();
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 8,),
+              Row(
+                children: [
+                  Expanded(
+                      child: Text("Alteração de Produtos")
+                  ),
+                  CupertinoSwitch(
+                    value: controller.permAltProduto,
+                    onChanged: (value) {
+                      controller.setPermAltProduto();
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 8,),
+              Row(
+                children: [
+                  Expanded(
+                      child: Text("Controle de Caixa")
+                  ),
+                  CupertinoSwitch(
+                    value: controller.permContCaixa,
+                    onChanged: (value) {
+                      controller.setPermContCaixa();
+                    },
                   ),
                 ],
               ),
@@ -226,8 +280,10 @@ class DialogUsuario{
                   ),
                   SizedBox(width: 8,),
                   CupertinoSwitch(
-                    value: controller.perfilSelected?.permVisRelator??false,
-                    onChanged: (value) {},
+                    value: controller.permVisRelator,
+                    onChanged: (value) {
+                      controller.setPermVisRelator();
+                    },
                   ),
                 ],
               ),
@@ -239,8 +295,10 @@ class DialogUsuario{
                   ),
                   SizedBox(width: 8,),
                   CupertinoSwitch(
-                    value: controller.perfilSelected?.permVisVendas??false,
-                    onChanged: (value) {},
+                    value: controller.permVisVendas,
+                    onChanged: (value) {
+                      controller.setPermVisVendas();
+                    },
                   ),
                 ],
               )

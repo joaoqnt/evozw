@@ -1,6 +1,8 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:evoz_web/components/custom_dropdown.dart';
 import 'package:evoz_web/model/FormaPagamento.dart';
+import 'package:evoz_web/util/FormatDate.dart';
+import 'package:evoz_web/util/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -13,7 +15,7 @@ import '../components/custom_snackbar.dart';
 class DialogEndVenda{
 
   endPedido(BuildContext context, BalcaoController controller){
-    controller.itensSelected.isEmpty || controller.currentCaixa?.ativo != true ?
+    controller.itensSelected.isEmpty || (Global().usuario!.permContCaixa == true && controller.currentCaixa?.ativo != true )?
     controller.itensSelected.isEmpty ?
     CustomSnackbar(
         message: "Adicione um Produto",
@@ -26,6 +28,7 @@ class DialogEndVenda{
     ).show(context):
     showDialog(context: context, builder: (context) {
       controller.getValorRestante();
+      controller.tecDataPedido.text = FormatingDate.getDate(DateTime.now(), FormatingDate.formatDDMMYYYYHHMM);
       return AlertDialog(
         title: const Text("Venda"),
         content: SingleChildScrollView(
@@ -127,6 +130,24 @@ class DialogEndVenda{
                           child: Expanded(
                             child: Column(
                               children: [
+                                Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () async{
+                                          await controller.setDateVenda(context);
+                                        },
+                                        icon: Icon(Icons.calendar_month)
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                        child: CustomTextField(
+                                            tec: controller.tecDataPedido,
+                                            label: "Data Venda",
+                                            enabled: false
+                                        )
+                                    )
+                                  ],
+                                ),
                                 CustomTextField(tec: controller.tecTotalBruto, label: "Total Bruto",enabled: false),
                                 CustomTextField(tec: controller.tecTotalLiq, label: "Total Líquido", enabled: false),
                                 CustomTextField(

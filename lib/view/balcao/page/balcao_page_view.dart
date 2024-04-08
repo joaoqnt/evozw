@@ -1,5 +1,6 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:evoz_web/components/circle_number.dart';
+import 'package:evoz_web/util/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:evoz_web/components/card_produto.dart';
@@ -206,7 +207,7 @@ class _BalcaoPageViewState extends State<BalcaoPageView> {
               ),
             ),
             SizedBox(width: 8,),
-            OutlinedButton(
+            Global().usuario!.permContCaixa == true ? OutlinedButton(
                 onPressed: (){
                   DialogCaixa().showCaixa(
                     context: context,
@@ -217,7 +218,7 @@ class _BalcaoPageViewState extends State<BalcaoPageView> {
                   style:TextStyle(color:controller.currentCaixa?.ativo == true
                       ? Colors.green : Colors.red) ,
                 )
-            ),
+            ) : Container(),
           ],
         )
     );

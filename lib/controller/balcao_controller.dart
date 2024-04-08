@@ -103,7 +103,9 @@ abstract class _BalcaoController with Store{
   TextEditingController tecObsPedido = TextEditingController();
   TextEditingController tecPesquisa = TextEditingController();
   TextEditingController tecPesquisaComanda = TextEditingController();
+  TextEditingController tecDataPedido = TextEditingController();
   List<Map<Image,String>> bandeiras = [];
+  DateTime? _startDate;
   IFrameElement iframe = IFrameElement();
 
   @action
@@ -233,6 +235,34 @@ abstract class _BalcaoController with Store{
     }
     _getValorTotal();
     itensSelected.sort((a, b) => a.id!.compareTo(b.id!));
+  }
+
+  @action
+  Future setDateVenda(BuildContext context) async{
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now() ,
+        firstDate: DateTime(2023),
+        lastDate: DateTime.now(),
+        helpText: "De"
+    );
+    if (picked != null) {
+      _startDate = picked;
+      final TimeOfDay? pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(DateTime.now())
+      );
+      if(pickedTime != null){
+        _startDate = DateTime(
+          _startDate!.year,
+          _startDate!.month,
+          _startDate!.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+        tecDataPedido.text = FormatingDate.getDate(_startDate, FormatingDate.formatDDMMYYYYHHMM);
+      }
+    }
   }
 
 
@@ -432,7 +462,7 @@ abstract class _BalcaoController with Store{
         usuario: Global().usuario,
         dataAlteracao: DateTime.now(),
         comanda: comanda,
-        dataPedido: vendaSelected != null ? vendaSelected!.dataPedido : DateTime.now(),
+        dataPedido:_startDate??(vendaSelected != null ? vendaSelected!.dataPedido : DateTime.now()),
         mesa: mesaSelected?.id,
         desconto: UtilBrasilFields.converterMoedaParaDouble(tecDesconto.text.isEmpty ? "0" : tecDesconto.text),
         valorBruto: valorTotal,

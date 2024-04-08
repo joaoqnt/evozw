@@ -22,22 +22,36 @@ abstract class _ConfigController with Store{
   TextEditingController tecSenha = TextEditingController();
   @observable
   List<Usuario> usuarios = ObservableList.of([]);
-  @observable
-  Config? perfilSelected;
+  // @observable
+  // Config? perfilSelected;
   @observable
   int pageSelected = 0;
-  @observable
-  List<Config> perfis = [];
+  // @observable
+  // List<Config> perfis = [];
   @observable
   bool hidePassword = true;
   @observable
   bool isLoading = false;
+  @observable
+  bool permCadCliente = false;
+  @observable
+  bool permAltCliente = false;
+  @observable
+  bool permCadProduto = false;
+  @observable
+  bool permAltProduto = false;
+  @observable
+  bool permVisRelator = false;
+  @observable
+  bool permVisVendas = false;
+  @observable
+  bool permContCaixa = false;
 
   @action
   Future<List<Usuario>> getUsuarios () async{
     usuarios = await _repository.getAll();
     usuarios.sort((Usuario a, Usuario b) => a.nome!.toLowerCase().compareTo(b.nome!.toLowerCase()));
-    _loadPerfis();
+    // _loadPerfis();
     return usuarios;
   }
 
@@ -45,12 +59,19 @@ abstract class _ConfigController with Store{
   createUsuario() async{
     isLoading = true;
     Usuario usuario = Usuario(
-        perfil: (perfilSelected?.perfil??"balconista"),
+        perfil: '',
         telefone: UtilBrasilFields.removeCaracteres(tecTelefone.text),
         email: tecEmail.text.toLowerCase(),
         nome: tecNome.text,
         senha:tecSenha.text,// Criptography().encryptPassword(tecSenha.text),
         dataCadastro: DateTime.now(),
+        permAltCliente: permAltCliente,
+        permAltProduto: permAltProduto,
+        permCadCliente: permCadCliente,
+        permCadProduto: permAltProduto,
+        permContCaixa: permContCaixa,
+        permVisRelator: permVisRelator,
+        permVisVendas: permVisVendas,
         ativo: true
     );
     await _repository.insertUsuario(usuario);
@@ -63,12 +84,19 @@ abstract class _ConfigController with Store{
     isLoading = true;
     usuario = Usuario(
         id: usuario.id,
-        perfil: (perfilSelected?.perfil??"balconista"),
+        perfil: '',
         telefone: UtilBrasilFields.removeCaracteres(tecTelefone.text),
         email: tecEmail.text,
         nome: tecNome.text,
         senha: tecSenha.text,//Criptography().encryptPassword(tecSenha.text),
         dataCadastro: usuario.dataCadastro,
+        permAltCliente: permAltCliente,
+        permAltProduto: permAltProduto,
+        permCadCliente: permCadCliente,
+        permCadProduto: permAltProduto,
+        permContCaixa: permContCaixa,
+        permVisRelator: permVisRelator,
+        permVisVendas: permVisVendas,
         ativo: true
     );
     await _repository.updateUsuario(usuario);
@@ -81,21 +109,53 @@ abstract class _ConfigController with Store{
     pageSelected = page;
   }
 
-
+  @action
+  setPermAltCliente(){
+    permAltCliente = !permAltCliente;
+  }
 
   @action
-  setPerfil(Config perfil){
-    perfilSelected = perfil;
-    // print(perfilSelected?.perfil);
+  setPermCadCliente(){
+    permCadCliente = !permCadCliente;
   }
 
-  _loadPerfis(){
-    perfis = [];
-    Config adm = Config().administrador(0);
-    Config bal = Config().balconista(0);
-    perfis.add(adm);
-    perfis.add(bal);
+  @action
+  setPermAltProduto(){
+    permAltProduto = !permAltProduto;
   }
+
+  @action
+  setPermCadProduto(){
+    permCadProduto = !permCadProduto;
+  }
+
+  @action
+  setPermVisRelator(){
+    permVisRelator = !permVisRelator;
+  }
+
+  @action
+  setPermVisVendas(){
+    permVisVendas = !permVisVendas;
+  }
+
+  @action
+  setPermContCaixa(){
+    permContCaixa = !permContCaixa;
+  }
+  // @action
+  // setPerfil(Config perfil){
+  //   perfilSelected = perfil;
+  //   // print(perfilSelected?.perfil);
+  // }
+
+  // _loadPerfis(){
+  //   perfis = [];
+  //   Config adm = Config().administrador(0);
+  //   Config bal = Config().balconista(0);
+  //   perfis.add(adm);
+  //   perfis.add(bal);
+  // }
 
   @action
   showPassword(){
